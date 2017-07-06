@@ -1,0 +1,120 @@
+@import url('https://fonts.googleapis.com/css?family=PT+Serif');
+
+body{
+	width: 500px;
+	margin: 2% auto;
+	-moz-user-select: none;
+	-webkit-user-select: none;
+	-ms-user-select: none;
+}
+
+body, input{
+	font-family: 'PT Serif', serif;
+	font-size: 1.8rem;
+}
+
+.container{
+	box-shadow: 0px 0px 4px 1px #eee;
+	padding: 20px;
+	background-color: rgba(220,220,220,.4);
+}
+
+input[type="text"] {
+	border: 2px solid rgba(98, 116, 252, .7); 
+	border-radius: 3px;
+	-webkit-border-radius: 3px; 
+	-moz-border-radius: 3px; 
+	outline: none; 
+	height: 60px; 
+	width: 100%; 
+	margin-bottom: 20px;
+	text-align: right;
+}
+
+.number-pad > div > div {
+	border: 1px solid rgba(0, 0, 0, .1);
+	margin: 5px;
+	margin-bottom: 10px;
+	padding: 10px 5px;
+	text-align: center;
+	box-shadow: 2px 2px 2px 0px #ddd;
+	background-color: rgba(225, 225, 225, .4);
+	display: inline-block;
+	width: 19%;
+	cursor: pointer;
+}
+
+.number-pad > div > .br{
+	width: 6.4%;
+}
+
+.number-pad > div > .no-num{
+	background-color: rgba(110, 164, 184, .1);
+}
+
+.number-pad > div > .equals{
+	background-color: rgba(0, 144, 196, .3);
+}
+
+.number-pad > div > .delete{
+	background-color: rgba(221,190,195,0.3);
+}
+
+.number-pad > div > .no-num:hover{
+	background-color: rgba(110, 164, 184, .3);
+}
+
+.number-pad > div > .equals:hover{
+	background-color: rgba(0, 144, 196, .7);
+}
+
+.number-pad > div > .delete:hover{
+	background-color: rgba(221,190,195, .7);
+}
+
+.number-pad > div > div:hover {
+	background-color: rgba(153, 153, 153, .3);
+}
+
+.number-pad > div > div:active {
+	box-shadow: -1px -1px 1px 1px #ddd;
+}
+
+input[type="text"]:focus{
+	border: 2px solid rgba(0, 148, 222, 1); 
+}
+
+.backspase{
+	background: url(../img/backspase.png) center no-repeat;
+	background-size: 40% 50%;
+}
+
+.plus-minus{
+	background: url(../img/plus-minus.png) center no-repeat;
+	background-size: 25% 55%;
+}
+
+.mult{
+	background: url(../img/mult.png) center no-repeat;
+  background-size: 25% 40%;
+}
+
+.div{
+	background: url(../img/div.png) center no-repeat;
+  background-size: 30% 50%;
+}
+
+.subt{
+	background: url(../img/subt.png) center no-repeat;
+  background-size: 30% 20%;
+}
+
+.add{
+	background: url(../img/add.png) center no-repeat;
+  background-size: 30% 50%;
+}
+
+.equals{
+	background: url(../img/equals.png) center no-repeat;
+  background-size: 30% 40%;
+}
