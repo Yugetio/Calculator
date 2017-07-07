@@ -8,7 +8,7 @@ body{
 	-ms-user-select: none;
 }
 
-body, input{
+body, #input{
 	font-family: 'PT Serif', serif;
 	font-size: 1.8rem;
 }
@@ -18,19 +18,22 @@ body, input{
 	border: 1px solid rgba(0,0,0,.1);
 	padding: 20px;
 	background-color: rgba(220,220,220,.4);
+	position: relative;
 }
 
-input[type="text"] {
+#input {
+	resize:none;
+	font-size: 2.3rem;
 	-webkit-box-sizing: border-box;
 	-moz-box-sizing: border-box;
 	box-sizing: border-box;
 
-	border: 2px solid rgba(98, 116, 252, .7); 
+	border: 2px solid rgba(0, 148, 222, 1);
 	border-radius: 3px;
 	-webkit-border-radius: 3px; 
 	-moz-border-radius: 3px; 
 	outline: none; 
-	height: 80px; 
+	height: 65px; 
 	width: 100%; 
 	margin-bottom: 20px;
 	text-align:right;
@@ -59,7 +62,7 @@ input[type="text"] {
 	background-color: rgba(110, 164, 184, .1);
 }
 
-.number-pad > div > .equals{
+.number-pad > div > .result{
 	background-color: rgba(0, 144, 196, .3);
 }
 
@@ -71,7 +74,7 @@ input[type="text"] {
 	background-color: rgba(110, 164, 184, .3);
 }
 
-.number-pad > div > .equals:hover{
+.number-pad > div > .result:hover{
 	background-color: rgba(0, 144, 196, .7);
 }
 
@@ -87,12 +90,8 @@ input[type="text"] {
 	box-shadow: -1px -1px 1px 1px #ddd;
 }
 
-input[type="text"]:focus{
-	border: 2px solid rgba(0, 148, 222, 1); 
-}
-
-.backspase{
-	background: url(../img/backspase.png) center no-repeat;
+.backspace{
+	background: url(../img/backspace.png) center no-repeat;
 	background-size: 40% 50%;
 }
 
@@ -106,8 +105,8 @@ input[type="text"]:focus{
   background-size: 25% 40%;
 }
 
-.div{
-	background: url(../img/div.png) center no-repeat;
+.dvsn{
+	background: url(../img/dvsn.png) center no-repeat;
   background-size: 30% 50%;
 }
 
@@ -121,7 +120,46 @@ input[type="text"]:focus{
   background-size: 30% 50%;
 }
 
-.equals{
-	background: url(../img/equals.png) center no-repeat;
+.result{
+	background: url(../img/result.png) center no-repeat;
   background-size: 30% 40%;
+}
+
+.message{
+	display: none;
+	position: absolute;
+	right: 20px;
+	top:10px;
+}
+
+.message > div{
+	margin: 0px;
+	z-index: 2;
+	position: absolute;
+}
+
+.loz{
+	top: 15px;
+	width: 0px;
+  height: 0px;
+  margin-top: 50px;
+  border-right: 50px solid #ff6161;
+  border-top: 25px solid transparent;
+  border-bottom: 25px solid transparent;
+  border-radius: 3px;
+}
+
+.boxMsg{ 
+	left: 40px;
+	width: 250px;
+	height: 50px;
+	background-color: #ff9c9c;
+	border: 5px solid #ff6161;
+	border-radius: 10px;
+	color: black;
+	padding: 15px 10px 0px;
+	text-align: center;
+	font-size: 1.4rem;
+	text-shadow: 0px 0px 5px #fff;
+
 }

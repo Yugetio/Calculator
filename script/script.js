@@ -2,7 +2,7 @@
 
 var input = document.querySelector('#input'),		
 		clearAll = document.querySelector('.c'),
-		backspase = document.querySelector('.backspase'),
+		backspace = document.querySelector('.backspace'),
 		plusMinus = document.querySelector('.plus-minus'),
 		one = document.querySelector('.one'),
 		two = document.querySelector('.two'),
@@ -15,16 +15,18 @@ var input = document.querySelector('#input'),
 		nine = document.querySelector('.nine'),
 		zero = document.querySelector('.zero'),
 		point = document.querySelector('.point'),
-		brOpen = document.querySelector('.bracket1'),
-		brClose = document.querySelector('.bracket2'),
-		equals = document.querySelector('.equals'),
+		brOpen = document.querySelector('.bracketOpen'),
+		brClose = document.querySelector('.bracketClose'),
+		result = document.querySelector('.result'), //qd
 		add = document.querySelector('.add'),
 		subt = document.querySelector('.subt'),
-		div = document.querySelector('.div'),
+		dvsn = document.querySelector('.dvsn'),
 		mult = document.querySelector('.mult'),
-		body = document.querySelector('body');;
+		body = document.querySelector('body'),
+		mainBoxMessage = document.querySelector('.message'),
+		boxMsg = document.querySelector('.boxMsg');
 
-//in/out and delete func
+//begin in/out and delete func
 one.addEventListener("click", forOne, false);
 two.addEventListener("click", forTwo, false);
 three.addEventListener("click", forThree, false);
@@ -38,14 +40,14 @@ zero.addEventListener("click", forZero, false);
 point.addEventListener("click", forPoint, false);
 add.addEventListener("click", forPlus, false);
 subt.addEventListener("click", forMinus, false);
-div.addEventListener("click", forDivide, false);
+dvsn.addEventListener("click", forDivision, false);
 mult.addEventListener("click", forMultipl, false);
 plusMinus.addEventListener("click", plMinus, false);
-backspase.addEventListener("click", backsp, false);
-clearAll.addEventListener("click", buttDelete, false);
+backspace.addEventListener("click", backsp, false);
+clearAll.addEventListener("click", btnDelete, false);
 brOpen.addEventListener("click", bracketOpen, false);
 brClose.addEventListener("click", bracketClose, false);
-// equals.addEventListener("click", answer false);
+result.addEventListener("click", answer, false);
 
 function forOne() {numPushIn(1);}
 function forTwo() {numPushIn(2);}
@@ -60,7 +62,7 @@ function forZero() {numPushIn(0);}
 function forMultipl() {testSign("×");}
 function forPlus() {testSign("+");}
 function forMinus() {testSign("-");}
-function forDivide() {
+function forDivision() {
 	var str = input.value;
 	var i = searchIndexOf(/\×|\+|\-|\÷|\(/, str);
 	var pointIndex;
@@ -84,21 +86,27 @@ function forDivide() {
 					}
 					if (i === 0 && countPoint !== 0) {
 						testSign("÷");
+					} else if(i === 0 && countPoint === 0){
+						showMessage("You can't do this!");
 					}
 				}
 			} else if (rightArr[0] !== "0") {
 				testSign("÷");
-			}
-		}
+			} 
+		} 
 	} else if (str[str.length-1] !== "0") {
 		testSign("÷");
-	}	
+	}	else {
+		showMessage("You can't do this!");
+	}
 }
 
 function bracketOpen () {
 	if (!/\d|\.|\)/.test(input.value[input.value.length-1])) {
 		input.value += "(";
 		focusInput();
+	} else {
+		showMessage("You can't do this!");
 	}
 }
 
@@ -118,7 +126,11 @@ function bracketClose () {
 		if (countOpen > countClose) {
 			input.value += ")";
 			focusInput();
+		} else {
+			showMessage("You can't do this!");
 		}
+	} else {
+		showMessage("You can't do this!");
 	}
 }
 
@@ -127,6 +139,8 @@ function numPushIn(arg){
 		testZero();
 		input.value += arg;
 		focusInput();
+	} else {
+		showMessage("You can't do this!");
 	}
 }
 
@@ -134,8 +148,10 @@ function testSign(arg) {
 	var str = input.value;
 	if(/\d|\)/.test(str[str.length-1])) {
 		input.value += arg;
-	} else if (str[str.length-1] !== "." && /\×|\+|\-|\÷/.test(str[str.length-1])){
+	} else if (/\×|\+|\-|\÷/.test(str[str.length-1])){
 		input.value = str.slice(0, -1) + arg;
+	} else {
+		showMessage("You can't do this!");
 	}
 	focusInput();
 }
@@ -161,6 +177,8 @@ function plMinus() {
 		input.value += "-";
 	} else if (str[str.length-1] === "(" || !/\W/.test(str[str.length-1])){
 		input.value += "-";
+	} else {
+		showMessage("You can't do this!");
 	}
 	focusInput();
 }
@@ -181,7 +199,7 @@ function forPoint() {
 		})(); 
 	} else if (/\d/.test(input.value[input.value.length-1])) {
 		testPoint = true;
-	} else if (input.value.length === 0 || /\×|\+|\-|\÷/.test(input.value[input.value.length-1])) {
+	} else if (input.value.length === 0 || /\×|\+|\-|\÷|\(/.test(input.value[input.value.length-1])) {
 		input.value += "0.";
 	}
 	if (testPoint) {
@@ -190,8 +208,8 @@ function forPoint() {
 	focusInput();
 }
 
-function backsp() {input.value = input.value.slice(0, -1); focusInput();}
-function buttDelete() {input.value = "";}
+function backsp() {input.value = input.value.slice(0, -1); focusInput(1);}
+function btnDelete() {input.value = "";focusInput("clear")}
 
 input.addEventListener("keypress", function(e) {e.preventDefault();},false);
 
@@ -201,17 +219,29 @@ body.addEventListener("keydown", function(e) {
 		backsp();
 	} else if (e.keyCode === 46) {
 		e.preventDefault();
-		buttDelete();
+		btnDelete();
 	}
 },false);
 
-
-
 var focusInput = function () {           
   var dop = input.value;
+  var oldLenght = dop.length; 
   input.value = "";
   input.value = dop;
-  input.focus();
+  input.focus(); 
+  if (arguments[0] && arguments[0] !== "clear") {
+  	oldLenght += arguments[0];
+  }
+  if (dop.length === 21 || arguments[0] && oldLenght === 51) {
+  	input.style.fontSize = "1.8rem";
+  	input.style.height = "90px";
+  } else if (dop.length === 51){
+  	input.style.fontSize = "1.3rem";
+  	input.style.height = "100px";
+  } else if (oldLenght === 21 || arguments[0] === "clear") {
+  	input.style.fontSize = "2.3rem";
+  	input.style.height = "65px";
+  }
 }
 
 function testZero() {
@@ -253,6 +283,51 @@ function testZero() {
 		} 
 	}
 }
+
+function showMessage(str, check) {
+	if (check) {
+		boxMsg.style.paddingTop = "5px";
+		boxMsg.style.height = "65px";
+	} else if (!check) {
+		boxMsg.style.paddingTop = "15px";
+		boxMsg.style.height = "50px";
+	}
+
+	boxMsg.innerHTML = str;
+	mainBoxMessage.style.display = "block"; 
+	setTimeout(function() {
+		mainBoxMessage.style.display = "none"; 
+	}, 2000);
+}
 //end in/out and delete func
 
-// function answer() {}
+// start calculator
+function answer() {
+		var testBrackets = (function() {
+			var brOpen = 0, brClose = 0;
+
+			for (var i = input.value.length - 1; i >= 0; i--) {
+				if (input.value[i] === "(") {
+					brOpen++;
+				} else if (input.value[i] === ")") {
+					brClose++;
+				}
+			}
+
+			if (brOpen === brClose) {
+				return true;
+			} else {
+				return false;
+			}
+		})();
+
+	if (/\d|\)/.test(input.value[input.value.length-1]) && testBrackets) {
+		// var arr = input.value.split("");
+	} else if (!testBrackets) {
+		showMessage("Not enough parentheses!");
+	} else {
+		showMessage("The syntax of this equation is incorrect!", 1);
+	}
+	
+}
+//end 
