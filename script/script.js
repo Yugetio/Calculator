@@ -308,6 +308,22 @@ function showMessage(str, check) {
 }
 //end in/out and delete func
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // start calculator
 function answer() {
 		brCloseAll();
@@ -319,7 +335,7 @@ function answer() {
   			arr[i] = getNum(item);
   		}
 		});
-	culcAnswer(arr);
+	input.value = culcAnswer(arr);
 	} else {
 		showMessage("The syntax of this equation is incorrect!", 1);
 	}
@@ -327,7 +343,6 @@ function answer() {
 
 function brCloseAll() {
 	var brOpen = 0, brClose = 0;
-
 			for (var i = input.value.length - 1; i >= 0; i--) {
 				if (input.value[i] === "(") {
 					brOpen++;
@@ -335,17 +350,16 @@ function brCloseAll() {
 					brClose++;
 				}
 			}
-
-			if (brOpen === brClose) {
-				return;
-			} else {
-				for (var i = 0; i <= brOpen - brClose; i++) {
+			if (brOpen !== brClose) {
+				for (var i = 0; i < brOpen - brClose; i++) {
 					input.value += ")";
 				}
-			}
+			} 
 }
 
 function newArr(arr) {
+	if (arr.length === 1) {return arr;}
+
 	var newArr = [];
 	var str = "";
 	var checkEnd = false;
@@ -363,7 +377,6 @@ function newArr(arr) {
 				}
 				str = "";
 			}
-
 			if (/\×|\÷|\+|\-|\(|\)/.test(arr[i])) {
 				newArr.push(arr[i]);
 			}
@@ -381,19 +394,41 @@ function getNum(num) {
     return;
 }
 
+
+
+
+
 function calc(num1, sing, num2) {
+	var count = 1;
+
+if (/\./.test(num1) && /\./.test(num2)) {
+	var count1 = 0,
+			count2 = 0;
+
+	if (/\./.test(num1)) {count1 = forSearchLengthAfterPoint(num1);}
+	if (/\./.test(num1)) {count2 = forSearchLengthAfterPoint(num2);}
+	count = (count2 >= count1) ? count2 : count1;
+
+	for (var i = count; i >= 0; i--) {count *= 10;}
+
+	num1 *= count;
+	num2 *= count;
+}
+
 	switch (sing) {
-		case "×": num1 * num2; break;
-		case "÷": num1 / num2; break;
-		case "+": num1 + num2; break;
-		case "-": num1 - num2; break;
+		case "×": return ((num1 * num2)/count); break;
+		case "÷": return ((num1 / num2)/count); break;
+		case "+": return ((num1 + num2)/count); break;
+		case "-": return ((num1 - num2)/count); break;
 	}
 }
 
-
-
-
-
+function forSearchLengthAfterPoint(arg) {
+	var arr = (arg+"").split(""),
+			indOf = arr.indexOf(".");
+	arr = arr.slice(indOf+1);
+	return arr.length;
+}
 
 
 
@@ -402,41 +437,47 @@ function calc(num1, sing, num2) {
 
 
 function culcAnswer(arr) {
-	var endIndex = arr.indexOf(")"),
-	startIndex = 0,//arr.lastIndexOf("("), 
-	rightArr = [],
-	lefArr = [],
-	mainArr = [],
-	finalArr = [];
+	if (arr.indexOf(")") !== -1) {
 
-	if (startIndex > 1) {rightArr = arr.slice(0, startIndex);}
-	if (endIndex !== arr.length-1) {lefArr = arr.slice(endIndex+1);}
-	mainArr = enumer(arr.slice(startIndex+1, endIndex));
-	if (rightArr.length > 0) {finalArr.push(rightArr);}
-	finalArr.push(mainArr);
-	if (lefArr.length > 0) {finalArr.push(lefArr);}
+		var endIndex = arr.indexOf(")"),
+				startIndex = arr.lastIndexOf("("), 
+				rightArr = [],
+				lefArr = [],
+				finalArr = [];
 
-	if (finalArr.length > 1) {
-		culcAnswer(finalArr);
+		if (startIndex+1 === endIndex) {
+			var dopArray = [];
+			for (var i = 0; i < arr.length; i++) {
+				if (i !== startIndex || i !== endIndex) {
+					dopArray.push(arr[i]);
+				}
+			}
+			arr = dopArray;
+		}
+	
+		if (startIndex > 1) {rightArr = arr.slice(0, startIndex);}
+		if (endIndex !== arr.length-1) {lefArr = arr.slice(endIndex+1);}
+		if (rightArr.length > 0) {finalArr = finalArr.concat(rightArr);}
+		if ((endIndex-1) - (startIndex+1) > 0) {
+			finalArr.push(enumer(arr.slice(startIndex+1, endIndex)));
+		} else {
+			finalArr = finalArr.concat(arr.slice(startIndex+1, endIndex));
+		}
+		if (lefArr.length > 0) {finalArr = finalArr.concat(lefArr);}
+		if (finalArr.length > 1) { return culcAnswer(finalArr);} 
+	} else if (arr.length > 1){
+		return enumer(arr);
 	} else {
-		return finalArr.loin();;
+		return arr.join();
 	}
 }
 
 function enumer(arg) {
 		var arr = arg,
-				mrArr = [],
-				mlArr = [],
-				dopArr = [],
 				i = -1;
 
 		if (arr.indexOf("minus") !== -1) {
 			i = arr.indexOf("minus");
-			if (i !== 0 ) {mrArr = arr.slice(0, i);}
-			if (i !== arr.length-2) {mlArr = arr.slice(i+1);}
-			if (mrArr.length > 0) {dopArr.push(rmArr);}
-			dopArr.push(arr[i+1]*(-1));
-			if (mlArr.length > 0) {dopArr.push(rmArr);}
 		} else if (arr.indexOf("×") !== -1) {
 			i = arr.indexOf("×");
 		} else if (arr.indexOf("÷") !== -1) {
@@ -447,17 +488,36 @@ function enumer(arg) {
 			i = arr.indexOf("-");
 		} 
 
-		(function () {
-			if (i !== 1) {mrArr = arr.slice(0, i);}
-			if (i != arr.length-2) {mlArr = arr.slice(i+1);}
-			if (mrArr.length > 0) {dopArr.push(rmArr);}
-			dopArr.push(calc(arr[i-1], arr[i], arr[i+1]));
-			if (mlArr.length > 0) {dopArr.push(rmArr);}
-		})();
+		arr = forEnumerMinus(i, arr);
 
-		if (dopArr.length > 1) {
-			enumer(dopArr);
+		if (arr.length > 1) {
+			return enumer(arr);
 		} else {
-			return dopArr;
+			return (getNum(arr.join()));
 		}
+}
+
+function forEnumerMinus(i, arr) {
+	var mrArr = [],
+			mlArr = [],
+			dopArr = [];
+
+	if (arr[i] !== "minus") {
+		if (i !== 1) {mrArr = arr.slice(0, i-1);}
+		if (i != arr.length-2) {mlArr = arr.slice(i+2);}
+	} else {
+		if (i !== 0 ) {mrArr = arr.slice(0, i);} 
+		if (i !== arr.length-2) {mlArr = arr.slice(i+1);}
 	}
+
+	if (mrArr.length > 0) {dopArr = dopArr.concat(mrArr);}
+
+	if (arr [i] === "minus") {
+		dopArr.push((arr[i+1]*(-1)));
+	} else {
+		dopArr.push(calc(arr[i-1], arr[i], arr[i+1]));
+	}
+	if (mlArr.length > 0) {dopArr = dopArr.concat(mlArr);}
+
+	return dopArr || arr;
+}
