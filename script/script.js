@@ -170,7 +170,6 @@ function plMinus() {
 	var str = input.value;
 	if (str[str.length-1] === "-") {
 		str = str.slice(0, -1);
-		console.log(str);
 		if (/\d/.test(str[str.length-1])) {
 			input.value = str + "+";
 		} else if (str[str.length-1] === " "){
@@ -311,8 +310,23 @@ function showMessage(str, check) {
 
 // start calculator
 function answer() {
-		var testBrackets = (function() {
-			var brOpen = 0, brClose = 0;
+		brCloseAll();
+	if (/\d|\)/.test(input.value[input.value.length-1])) {
+		var arr = input.value.split("");
+		arr = newArr(arr);
+		arr.forEach(function(item, i) {
+  		if (/^((\ ?\-)?\d+(\.\d+)?)$/.test(item)) {
+  			arr[i] = getNum(item);
+  		}
+		});
+	culcAnswer(arr);
+	} else {
+		showMessage("The syntax of this equation is incorrect!", 1);
+	}
+}
+
+function brCloseAll() {
+	var brOpen = 0, brClose = 0;
 
 			for (var i = input.value.length - 1; i >= 0; i--) {
 				if (input.value[i] === "(") {
@@ -323,36 +337,127 @@ function answer() {
 			}
 
 			if (brOpen === brClose) {
-				return true;
+				return;
 			} else {
-				return false;
+				for (var i = 0; i <= brOpen - brClose; i++) {
+					input.value += ")";
+				}
 			}
+}
+
+function newArr(arr) {
+	var newArr = [];
+	var str = "";
+	var checkEnd = false;
+	for (var i = 0; i <= arr.length; i++) {
+		if (arr[i] === " " || arr[i-1] === " " && arr[i] === "-" || arr[i-1] === "(" && arr[i] === "-" || i === 0 && arr[i] === "-" || checkEnd && /\d|\./.test(arr[i]) || /\d/.test(arr[i])) {
+			if (!checkEnd) {checkEnd = true;}
+			str += arr[i];
+		} else if(/\×|\÷|\+|\-|\(|\)/.test(arr[i]) || checkEnd){
+			if (checkEnd) {
+				checkEnd = false;
+				if (arr[i] === "(") {
+					newArr.push("minus");
+				} else {
+					newArr.push(str);
+				}
+				str = "";
+			}
+
+			if (/\×|\÷|\+|\-|\(|\)/.test(arr[i])) {
+				newArr.push(arr[i]);
+			}
+		}
+	}
+	return newArr;
+}
+
+function getNum(num) {
+    if (/^((\ ?\-)?\d+)$/.test(num)) {
+			return parseInt(num);        
+    } else if (/^((\ ?\-)?\d+\.\d+)$/.test(num)) {
+    	return parseFloat(num);  
+    }
+    return;
+}
+
+function calc(num1, sing, num2) {
+	switch (sing) {
+		case "×": num1 * num2; break;
+		case "÷": num1 / num2; break;
+		case "+": num1 + num2; break;
+		case "-": num1 - num2; break;
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+function culcAnswer(arr) {
+	var endIndex = arr.indexOf(")"),
+	startIndex = 0,//arr.lastIndexOf("("), 
+	rightArr = [],
+	lefArr = [],
+	mainArr = [],
+	finalArr = [];
+
+	if (startIndex > 1) {rightArr = arr.slice(0, startIndex);}
+	if (endIndex !== arr.length-1) {lefArr = arr.slice(endIndex+1);}
+	mainArr = enumer(arr.slice(startIndex+1, endIndex));
+	if (rightArr.length > 0) {finalArr.push(rightArr);}
+	finalArr.push(mainArr);
+	if (lefArr.length > 0) {finalArr.push(lefArr);}
+
+	if (finalArr.length > 1) {
+		culcAnswer(finalArr);
+	} else {
+		return finalArr.loin();;
+	}
+}
+
+function enumer(arg) {
+		var arr = arg,
+				mrArr = [],
+				mlArr = [],
+				dopArr = [],
+				i = -1;
+
+		if (arr.indexOf("minus") !== -1) {
+			i = arr.indexOf("minus");
+			if (i !== 0 ) {mrArr = arr.slice(0, i);}
+			if (i !== arr.length-2) {mlArr = arr.slice(i+1);}
+			if (mrArr.length > 0) {dopArr.push(rmArr);}
+			dopArr.push(arr[i+1]*(-1));
+			if (mlArr.length > 0) {dopArr.push(rmArr);}
+		} else if (arr.indexOf("×") !== -1) {
+			i = arr.indexOf("×");
+		} else if (arr.indexOf("÷") !== -1) {
+			i = arr.indexOf("÷");
+		} else if (arr.indexOf("+") !== -1) {
+			i = arr.indexOf("+");
+		} else if (arr.indexOf("-") !== -1) {
+			i = arr.indexOf("-");
+		} 
+
+		(function () {
+			if (i !== 1) {mrArr = arr.slice(0, i);}
+			if (i != arr.length-2) {mlArr = arr.slice(i+1);}
+			if (mrArr.length > 0) {dopArr.push(rmArr);}
+			dopArr.push(calc(arr[i-1], arr[i], arr[i+1]));
+			if (mlArr.length > 0) {dopArr.push(rmArr);}
 		})();
 
-	if (/\d|\)/.test(input.value[input.value.length-1]) && testBrackets) {
-
-
-
-
-		// var arr = input.value.split("");
-		// for (var i = arr.length - 1; i >= 0; i--) {
-		// 	if (arr[i] === "×") {
-		// 		arr[i] = "*";
-		// 	} else if (arr[i] === "÷"){
-		// 		arr[i] = "/";
-		// 	}
-		// }
-		// arr = arr.join("");
-		// input.value = eval(arr);
-
-
-
-
-	} else if (!testBrackets) {
-		showMessage("Not enough parentheses!");
-	} else {
-		showMessage("The syntax of this equation is incorrect!", 1);
+		if (dopArr.length > 1) {
+			enumer(dopArr);
+		} else {
+			return dopArr;
+		}
 	}
-	
-}
-//end 
