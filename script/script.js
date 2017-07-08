@@ -71,12 +71,11 @@ function forDivision() {
 	if (str.length > 1 && i !== 0) {
 		str = str.slice(i, str.length);
 	}
-
 	pointIndex = searchIndexOf(/\./, str)
 	if (pointIndex !== -1) {
 		if (pointIndex === 1 && str[pointIndex-1] !== "0" || pointIndex > 1) {
 			testSign("÷");
-		} else {
+		} else {	
 			var rightArr = str.slice(pointIndex+1, str.length);
 			if (rightArr.length > 1) {
 				var countPoint = rightArr.length;
@@ -92,13 +91,24 @@ function forDivision() {
 				}
 			} else if (rightArr[0] !== "0") {
 				testSign("÷");
-			} 
+			} else {
+				showMessage("You can't do this!");
+			}
 		} 
-	} else if (str[str.length-1] !== "0") {
+	} else if (str[0] !== "0") {
 		testSign("÷");
 	}	else {
 		showMessage("You can't do this!");
 	}
+}
+
+function searchIndexOf(re,str) {
+	for (var i = str.length - 1; i >= 0; i--) {
+		if (re.test(str[i])) {
+			return i;
+		} 
+	}
+	return -1;
 }
 
 function bracketOpen () {
@@ -148,7 +158,7 @@ function testSign(arg) {
 	var str = input.value;
 	if(/\d|\)/.test(str[str.length-1])) {
 		input.value += arg;
-	} else if (/\×|\+|\-|\÷/.test(str[str.length-1])){
+	} else if (/\×|\+|\-|\÷/.test(str[str.length-1]) && str[str.length-2] !== " "){
 		input.value = str.slice(0, -1) + arg;
 	} else {
 		showMessage("You can't do this!");
@@ -156,27 +166,25 @@ function testSign(arg) {
 	focusInput();
 }
 
-function searchIndexOf(re,str) {
-	for (var i = str.length - 1; i >= 0; i--) {
-		if (re.test(str[i])) {
-			return i;
-		} 
-	}
-	return -1;
-}
-
 function plMinus() {
 	var str = input.value;
 	if (str[str.length-1] === "-") {
-		input.value = str.slice(0, -1);
-		if (str[str.length-2] && str[str.length-2] !== "(" && !/\×|\+|\-|\÷/.test(str[str.length-2])) {
-			input.value += "+";
+		str = str.slice(0, -1);
+		console.log(str);
+		if (/\d/.test(str[str.length-1])) {
+			input.value = str + "+";
+		} else if (str[str.length-1] === " "){
+			input.value = str.slice(0, -1);
+		} else {
+			input.value = str;
 		}
 	} else if (str[str.length-1] === "+") {
 		input.value = str.slice(0, -1);
 		input.value += "-";
 	} else if (str[str.length-1] === "(" || !/\W/.test(str[str.length-1])){
 		input.value += "-";
+	} else if (/\×|\÷/.test(str[str.length-1])){
+		input.value += " -";
 	} else {
 		showMessage("You can't do this!");
 	}
@@ -322,7 +330,24 @@ function answer() {
 		})();
 
 	if (/\d|\)/.test(input.value[input.value.length-1]) && testBrackets) {
+
+
+
+
 		// var arr = input.value.split("");
+		// for (var i = arr.length - 1; i >= 0; i--) {
+		// 	if (arr[i] === "×") {
+		// 		arr[i] = "*";
+		// 	} else if (arr[i] === "÷"){
+		// 		arr[i] = "/";
+		// 	}
+		// }
+		// arr = arr.join("");
+		// input.value = eval(arr);
+
+
+
+
 	} else if (!testBrackets) {
 		showMessage("Not enough parentheses!");
 	} else {
