@@ -218,7 +218,29 @@ function forPoint() {
 function backsp() {input.value = input.value.slice(0, -1); focusInput(1);}
 function btnDelete() {input.value = "";focusInput("clear")}
 
-input.addEventListener("keypress", function(e) {e.preventDefault();},false);
+body.addEventListener("keypress", function(e) {
+	e.preventDefault();
+	switch (e.keyCode){
+		case 40: bracketOpen();break;
+		case 41: bracketClose();break;
+		case 42: forMultipl();break;
+		case 43: forPlus();break;
+		case 45: forMinus();break;
+		case 46: forPoint();break;
+		case 47: forDivision();break;
+		case 48: forZero();break;
+		case 49: forOne();break;
+		case 50: forTwo();break;
+		case 51: forThree();break;
+		case 52: forFour();break;
+		case 53: forFive();break;
+		case 54: forSix();break;
+		case 55: forSeven();break;
+		case 56: forEight();break;
+		case 57: forNine();break;
+		case 13: answer();break;
+	} 
+},false);
 
 body.addEventListener("keydown", function(e) {
 	if (e.keyCode === 8) {
