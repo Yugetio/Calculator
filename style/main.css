@@ -14,6 +14,8 @@ body, #input{
 }
 
 .container{
+	-webkit-box-shadow: 0px 0px 6px 3px #eee;
+	-moz-box-shadow: 0px 0px 6px 3px #eee;
 	box-shadow: 0px 0px 6px 3px #eee;
 	border: 1px solid rgba(0,0,0,.1);
 	padding: 20px;
@@ -27,9 +29,10 @@ body, #input{
 	-webkit-box-sizing: border-box;
 	-moz-box-sizing: border-box;
 	box-sizing: border-box;
-
 	-webkit-transition: height .8s;
-
+	 -o-transition: height .8s;
+	-moz-transition: height .8s;
+	transition: height .8s;
 	border: 2px solid rgba(0, 148, 222, 1);
 	border-radius: 3px;
 	-webkit-border-radius: 3px; 
@@ -49,7 +52,10 @@ body, #input{
 	margin-bottom: 10px;
 	padding: 10px 5px;
 	text-align: center;
+	-webkit-box-shadow: 2px 2px 2px 0px #ddd;
+	-moz-box-shadow: 2px 2px 2px 0px #ddd;
 	box-shadow: 2px 2px 2px 0px #ddd;
+
 	background-color: rgba(225, 225, 225, .4);
 	display: inline-block;
 	width: 19%;
@@ -89,41 +95,65 @@ body, #input{
 }
 
 .number-pad > div > div:active {
+	-webkit-box-shadow: -1px -1px 1px 1px #ddd;
+	-moz-box-shadow: -1px -1px 1px 1px #ddd;
 	box-shadow: -1px -1px 1px 1px #ddd;
 }
 
 .backspace{
 	background: url(../img/backspace.png) center no-repeat;
+	-webkit-background-size: 40% 50%;
+	-o-background-size: 40% 50%;
+	-moz-background-size: 40% 50%;
 	background-size: 40% 50%;
 }
 
 .plus-minus{
-	background: url(../img/plus-minus.png) center no-repeat;
+	background: url(../img/plusMinus.png) center no-repeat;
+	-webkit-background-size: 25% 55%;
+	-o-background-size: 25% 55%;
+	-moz-background-size: 25% 55%;
 	background-size: 25% 55%;
 }
 
 .mult{
 	background: url(../img/mult.png) center no-repeat;
+  -webkit-background-size: 25% 40%;
+  -o-background-size: 25% 40%;
+  -moz-background-size: 25% 40%;
   background-size: 25% 40%;
 }
 
 .dvsn{
 	background: url(../img/dvsn.png) center no-repeat;
+  -webkit-background-size: 30% 50%;
+  -o-background-size: 30% 50%;
+  -moz-background-size: 30% 50%;
   background-size: 30% 50%;
+
 }
 
 .subt{
 	background: url(../img/subt.png) center no-repeat;
+  -webkit-background-size: 30% 20%;
+  -o-background-size: 30% 20%;
+  -moz-background-size: 30% 20%;
   background-size: 30% 20%;
 }
 
 .add{
 	background: url(../img/add.png) center no-repeat;
+  -webkit-background-size: 30% 50%;
+  -o-background-size: 30% 50%;
+  -moz-background-size: 30% 50%;
   background-size: 30% 50%;
 }
 
 .result{
 	background: url(../img/result.png) center no-repeat;
+  -webkit-background-size: 30% 40%;
+  -o-background-size: 30% 40%;
+  -moz-background-size: 30% 40%;
   background-size: 30% 40%;
 }
 
@@ -148,7 +178,6 @@ body, #input{
   border-right: 50px solid #ff6161;
   border-top: 25px solid transparent;
   border-bottom: 25px solid transparent;
-  border-radius: 3px;
 }
 
 .boxMsg{ 
@@ -157,6 +186,8 @@ body, #input{
 	height: 50px;
 	background-color: #ff9c9c;
 	border: 5px solid #ff6161;
+	-webkit-border-radius: 10px;
+	-moz-border-radius: 10px;
 	border-radius: 10px;
 	color: black;
 	padding: 15px 10px 0px;

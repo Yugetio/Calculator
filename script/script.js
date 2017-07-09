@@ -63,9 +63,9 @@ function forMultipl() {testSign("×");}
 function forPlus() {testSign("+");}
 function forMinus() {testSign("-");}
 function forDivision() {
-	var str = input.value;
-	var i = searchIndexOf(/\×|\+|\-|\÷|\(/, str);
-	var pointIndex;
+	var str = input.value,
+			i = searchIndexOf(/\×|\+|\-|\÷|\(/, str),
+			pointIndex;
 
 	i = i !== -1 ? i+1 : 0;
 	if (str.length > 1 && i !== 0) {
@@ -215,8 +215,16 @@ function forPoint() {
 	focusInput();
 }
 
-function backsp() {input.value = input.value.slice(0, -1); focusInput(1);}
-function btnDelete() {input.value = "";focusInput("clear")}
+function backsp() {
+	if (input.value[input.value.length-1] === "-" && input.value[input.value.length-2] === " ") {
+		input.value = input.value.slice(0, -2);
+		focusInput(2);
+	} else {
+		input.value = input.value.slice(0, -1);
+		focusInput(1);
+	}
+}
+function btnDelete() {input.value = "";focusInput("clear");}
 
 body.addEventListener("keypress", function(e) {
 	e.preventDefault();
@@ -274,9 +282,10 @@ var focusInput = function () {          
 }
 
 function testZero() {
-	var str = input.value;
-	var dop = false;
-	var count = 0;
+	var str = input.value,
+			dop = false,
+			count = 0;
+
 	var lastI = (function() {
 		for (var i = str.length - 1; i >= 0; i--) {
 			if (str[i] === ".") {
@@ -347,6 +356,7 @@ function answer() {
   		}
 		});
 	input.value = culcAnswer(arr);
+	focusInput("clear");
 	} else {
 		showMessage("The syntax of this equation is incorrect!", 1);
 	}
@@ -354,25 +364,25 @@ function answer() {
 
 function brCloseAll() {
 	var brOpen = 0, brClose = 0;
-			for (var i = input.value.length - 1; i >= 0; i--) {
-				if (input.value[i] === "(") {
-					brOpen++;
-				} else if (input.value[i] === ")") {
-					brClose++;
-				}
-			}
-			if (brOpen !== brClose) {
-				for (var i = 0; i < brOpen - brClose; i++) {
-					input.value += ")";
-				}
-			}
+	for (var i = input.value.length - 1; i >= 0; i--) {
+		if (input.value[i] === "(") {
+			brOpen++;
+		} else if (input.value[i] === ")") {
+			brClose++;
+		}
+	}
+	if (brOpen !== brClose) {
+		for (var i = 0; i < brOpen - brClose; i++) {
+			input.value += ")";
+		}
+	}
 }
 
 function newArr(arr) {
 	if (arr.length === 1) {return arr;}
-	var newArr = [];
-	var str = "";
-	var checkEnd = false;
+	var newArr = [],
+			str = "",
+			checkEnd = false;
 	for (var i = 0; i <= arr.length; i++) {
 		if (arr[i] === " " || arr[i-1] === " " && arr[i] === "-" || arr[i-1] === "(" && arr[i] === "-" || i === 0 && arr[i] === "-" || checkEnd && /\d|\./.test(arr[i]) || /\d/.test(arr[i])) {
 			if (!checkEnd) {checkEnd = true;}
@@ -442,8 +452,8 @@ function calc(num1, sing, num2) {
 		case "-": answ=(num1-num2)/count; break;
 	}
 
-	if (/\./.test(answ) && forSearchLengthAfterPoint(answ) > 7) {
-		answ = getNum(answ.toFixed(7));
+	if (/\./.test(answ) && forSearchLengthAfterPoint(answ) > 11) {
+		answ = getNum(answ.toFixed(11));
 	}
 
 	return answ;
@@ -463,7 +473,6 @@ function culcAnswer(arr) {
 				finalArr = [],
 				lArr = [],
 				rArr = [];
-
 
 		if (startIndex > 0) {lArr = arr.slice(0, startIndex);}
 		if (endIndex !== arr.length-1) {rArr = arr.slice(endIndex+1);}
