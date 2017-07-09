@@ -308,27 +308,16 @@ function showMessage(str, check) {
 }
 //end in/out and delete func
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 // start calculator
 function answer() {
-		brCloseAll();
 	if (/\d|\)/.test(input.value[input.value.length-1])) {
+		brCloseAll();
 		var arr = input.value.split("");
+
+		if (arr.indexOf("/") !== -1 || arr.indexOf("*") !== -1) {
+			arr = replaceSignInArr(arr);
+		}
+
 		arr = newArr(arr);
 		arr.forEach(function(item, i) {
   		if (/^((\ ?\-)?\d+(\.\d+)?)$/.test(item)) {
@@ -354,12 +343,11 @@ function brCloseAll() {
 				for (var i = 0; i < brOpen - brClose; i++) {
 					input.value += ")";
 				}
-			} 
+			}
 }
 
 function newArr(arr) {
 	if (arr.length === 1) {return arr;}
-
 	var newArr = [];
 	var str = "";
 	var checkEnd = false;
@@ -385,86 +373,95 @@ function newArr(arr) {
 	return newArr;
 }
 
+function replaceSignInArr(arr) {
+	var dopArr = [];
+	for (var i = 0; i < arr.length; i++) {
+		if (arr[i] === "/") {
+			dopArr.push("÷");
+		} else if (arr[i] === "*") {
+			dopArr.push("×");
+		} else {
+			dopArr.push(arr[i]);
+		}
+	}
+
+	return dopArr;
+}
+
 function getNum(num) {
     if (/^((\ ?\-)?\d+)$/.test(num)) {
 			return parseInt(num);        
     } else if (/^((\ ?\-)?\d+\.\d+)$/.test(num)) {
     	return parseFloat(num);  
     }
-    return;
 }
-
-
-
-
 
 function calc(num1, sing, num2) {
-	var count = 1;
+	var count = 1,
+			answ = 0;
 
-if (/\./.test(num1) && /\./.test(num2)) {
-	var count1 = 0,
-			count2 = 0;
-
-	if (/\./.test(num1)) {count1 = forSearchLengthAfterPoint(num1);}
-	if (/\./.test(num1)) {count2 = forSearchLengthAfterPoint(num2);}
-	count = (count2 >= count1) ? count2 : count1;
-
-	for (var i = count; i >= 0; i--) {count *= 10;}
-
-	num1 *= count;
-	num2 *= count;
-}
+	if (sing !== "×" && sing !== "÷") {
+		if (/\./.test(num1) || /\./.test(num2)) {
+			var count1 = 0,
+					count2 = 0;
+			if (/\./.test(num1)) {count1 = forSearchLengthAfterPoint(num1);}
+			if (/\./.test(num1)) {count2 = forSearchLengthAfterPoint(num2);}
+			count1 = (count2 >= count1) ? count2 : count1;
+			for (var i = count1; i > 0; i--) {count *= 10;}	
+			num1 *= count;
+			num2 *= count;
+		}
+	}
 
 	switch (sing) {
-		case "×": return ((num1 * num2)/count); break;
-		case "÷": return ((num1 / num2)/count); break;
-		case "+": return ((num1 + num2)/count); break;
-		case "-": return ((num1 - num2)/count); break;
+		case "×": answ=num1*num2; break;
+		case "÷": answ=num1/num2; break;
+		case "+": answ=(num1+num2)/count; break;
+		case "-": answ=(num1-num2)/count; break;
 	}
+
+	if (/\./.test(answ) && forSearchLengthAfterPoint(answ) > 7) {
+		answ = getNum(answ.toFixed(7));
+	}
+
+	return answ;
 }
 
 function forSearchLengthAfterPoint(arg) {
 	var arr = (arg+"").split(""),
 			indOf = arr.indexOf(".");
-	arr = arr.slice(indOf+1);
-	return arr.length;
+	return (arr.length-1) - indOf;
 }
 
-
-
-
-
-
-
 function culcAnswer(arr) {
-	if (arr.indexOf(")") !== -1) {
+	if (arr.indexOf("(") !== -1) {
 
-		var endIndex = arr.indexOf(")"),
-				startIndex = arr.lastIndexOf("("), 
-				rightArr = [],
-				lefArr = [],
-				finalArr = [];
+		var startIndex = arr.lastIndexOf("("),
+				endIndex = forSearchBracketsIndex(arr, startIndex+1),
+				finalArr = [],
+				lArr = [],
+				rArr = [];
 
-		if (startIndex+1 === endIndex) {
-			var dopArray = [];
-			for (var i = 0; i < arr.length; i++) {
-				if (i !== startIndex || i !== endIndex) {
-					dopArray.push(arr[i]);
-				}
-			}
-			arr = dopArray;
-		}
+
+		if (startIndex > 0) {lArr = arr.slice(0, startIndex);}
+		if (endIndex !== arr.length-1) {rArr = arr.slice(endIndex+1);}
 	
-		if (startIndex > 1) {rightArr = arr.slice(0, startIndex);}
-		if (endIndex !== arr.length-1) {lefArr = arr.slice(endIndex+1);}
-		if (rightArr.length > 0) {finalArr = finalArr.concat(rightArr);}
-		if ((endIndex-1) - (startIndex+1) > 0) {
-			finalArr.push(enumer(arr.slice(startIndex+1, endIndex)));
-		} else {
+		if (lArr.length > 0) {finalArr = finalArr.concat(lArr);}
+
+		if ((endIndex-1) - (startIndex+1) === 0) {
 			finalArr = finalArr.concat(arr.slice(startIndex+1, endIndex));
+		} else {
+			finalArr.push(enumer(arr.slice(startIndex+1, endIndex)));
 		}
-		if (lefArr.length > 0) {finalArr = finalArr.concat(lefArr);}
-		if (finalArr.length > 1) { return culcAnswer(finalArr);} 
+
+		if (rArr.length > 0) {finalArr = finalArr.concat(rArr);}
+		
+		if (finalArr.length > 1) {
+			return culcAnswer(finalArr);
+		} else {
+			return finalArr.join();
+		}
+
 	} else if (arr.length > 1){
 		return enumer(arr);
 	} else {
@@ -472,21 +469,27 @@ function culcAnswer(arr) {
 	}
 }
 
+function forSearchBracketsIndex(arr, i) {
+	var dopArr = arr.slice(i);
+	return dopArr.indexOf(")")+i;
+}
+
 function enumer(arg) {
 		var arr = arg,
-				i = -1;
+				i = -1,
+				ii = -1;
 
 		if (arr.indexOf("minus") !== -1) {
 			i = arr.indexOf("minus");
-		} else if (arr.indexOf("×") !== -1) {
+		} else if (arr.indexOf("×") !== -1 || arr.indexOf("÷") !== -1) {
 			i = arr.indexOf("×");
-		} else if (arr.indexOf("÷") !== -1) {
-			i = arr.indexOf("÷");
-		} else if (arr.indexOf("+") !== -1) {
+			ii = arr.indexOf("÷");
+			i = (ii === -1 || i < ii && i !== -1) ? i : ii;
+		}  else if (arr.indexOf("+") !== -1 || arr.indexOf("-") !== -1) {
 			i = arr.indexOf("+");
-		} else if (arr.indexOf("-") !== -1) {
-			i = arr.indexOf("-");
-		} 
+			ii = arr.indexOf("-");
+			i = (ii === -1 || i < ii && i !== -1) ? i : ii;
+		}
 
 		arr = forEnumerMinus(i, arr);
 
@@ -502,22 +505,22 @@ function forEnumerMinus(i, arr) {
 			mlArr = [],
 			dopArr = [];
 
-	if (arr[i] !== "minus") {
-		if (i !== 1) {mrArr = arr.slice(0, i-1);}
-		if (i != arr.length-2) {mlArr = arr.slice(i+2);}
+	if (arr[i] === "minus") {
+		if (i !== 0 ) {mlArr = arr.slice(0, i);} 
+		if (i !== arr.length-2) {mrArr = arr.slice(i+2);}
 	} else {
-		if (i !== 0 ) {mrArr = arr.slice(0, i);} 
-		if (i !== arr.length-2) {mlArr = arr.slice(i+1);}
+		if (i !== 1) {mlArr = arr.slice(0, i-1);}
+		if (i !== arr.length-2) {mrArr = arr.slice(i+2);}
 	}
 
-	if (mrArr.length > 0) {dopArr = dopArr.concat(mrArr);}
+	if (mlArr.length > 0) {dopArr = dopArr.concat(mlArr);}
 
-	if (arr [i] === "minus") {
+	if (arr[i] === "minus") {
 		dopArr.push((arr[i+1]*(-1)));
 	} else {
 		dopArr.push(calc(arr[i-1], arr[i], arr[i+1]));
 	}
-	if (mlArr.length > 0) {dopArr = dopArr.concat(mlArr);}
+	if (mrArr.length > 0) {dopArr = dopArr.concat(mrArr);}
 
-	return dopArr || arr;
+	return dopArr;
 }
